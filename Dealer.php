@@ -13,7 +13,16 @@ class Dealer
 
   public function beginHand(array $players)
   {
-
+    foreach($players as $player)
+    {
+      $cards = $this->dealCards(2);
+      $player->acceptHoleCards($cards);
+      if($player->isHuman()) {
+        $card1 = $cards[0]['suite'] . $cards[0]['value'];
+        $card2 = $cards[1]['suite'] . $cards[1]['value'];
+        giveInformation('Your hole cards are ' . $card1 . ' and ' . $card2);
+      }
+    }
   }
 
   public function burnACard()
@@ -32,8 +41,10 @@ class Dealer
     $result = array();
     for($num; $num > 0; $num--)
     {
-
+      $result[] = array_shift($this->deck);
     }
+
+    return $result;
   }
 
   public function doTheFlop()

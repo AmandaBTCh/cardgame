@@ -1,0 +1,57 @@
+#!/opt/local/bin/php
+<?php
+
+require 'playfunc.php';
+
+echo "Welcome to Texas Hold'em!
+
+Before we can get started, we need to get some information from you.
+";
+
+$players = getPlayerCount();
+
+echo "
+Great! Sounds like a great game.
+
+";
+
+$bank= getPlayerBank();
+
+echo "
+Fantastic. Let me set up the game for you...";
+
+$table = setupTable();
+setupPlayers($table, $players, $bank);
+
+echo "done!";
+
+mainloop:
+while(true)
+{
+
+  echo "\nWhat should I do now? ";
+
+  $action = getStdin();
+
+  switch($action)
+  {
+    case 'table': print_r($table); break;
+    case 'play hand': playHand($table); break;
+    case 'get pot': echo $table->pot; break;
+    case 'run code': goto runcode; break;
+    case 'exit': echo "Ok. Thanks for playing!\n"; exit; break;
+  }
+
+}
+
+runcode:
+
+echo "\nBe careful what you ask me to do! I'm going to run eval() on your request! What would you like? ";
+
+$code = fgets(STDIN);
+
+eval($code);
+
+echo "\n\nOk, that's done.\n";
+
+goto mainloop;
