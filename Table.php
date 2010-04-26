@@ -8,7 +8,7 @@ class Table
   protected $littleBlind;
   protected $bigBlind;
   protected $pot = 0;
-  protected $visibleCards;
+  protected $visibleCards = array();
   protected $roundOrder = array();
 
   public function addDealer(Dealer $dealer)
@@ -33,36 +33,6 @@ class Table
     }
   }
 
-  public function playHand()
-  {
-    $this->determineBlinds();
-    giveInformation("The pot is now $" . $this->pot . ".");
-    $this->dealer->beginHand($this->players);
-    $this->goAround(true);
-  }
-
-  public function determineWinner()
-  {}
-
-  // Function that handles betting, asks the dealer to do the dealer's job,
-  // and maintains state.
-  public function processRound()
-  {}
-
-  public function determineBlinds()
-  {
-    $this->bigBlind = array_shift($this->players);
-    $this->littleBlind = array_pop($this->players);
-    $bb = $this->bigBlind->payBlind(6);
-    $lb = $this->littleBlind->payBlind(3);
-    $this->roundOrder[] = $this->littleBlind;
-    $this->roundOrder[] = $this->bigBlind;
-    array_merge($this->roundOrder, $this->players);
-    array_unshift($this->players, $this->bigBlind);
-    array_unshift($this->players, $this->littleBlind);
-    $this->addToPot($bb + $lb);
-  }
-
   public function addToPot($amount)
   {
     if(!is_numeric($amount) || $amount < 0) {
@@ -72,14 +42,30 @@ class Table
     $this->pot += $amount;
   }
 
-  public function goAround($firstRound = false)
+  public function startHand()
   {
-
+    // Blinds
+    // Hole cards dealt
+    // First round of betting, starting with third player
+    // Compare that bets are even; if not, redo betting until even.
   }
 
+  public function bettingRound($order)
+  {
+    foreach($order as $player) {
+      $decision = $player->makeDecision($this->pot);
+      if(is_numeric($decision)) {
+        $this->addToPot($amount);
+      } elseif (is_array($decision)) {
+        $this->dealer->acceptReturnedCards($decision);
+      } else {
+        throw new Exception('Unable to determine what this player did.');
+      }
+    }
+  }
 
-   public function __get($name)
-   {
-     return $this->{$name};
-   }
+  public function getVisibleCards()
+  {
+    return $this->visibleCards;
+  }
 }

@@ -17,18 +17,20 @@ class Dealer
     {
       $cards = $this->dealCards(2);
       $player->acceptHoleCards($cards);
-      if($player->isHuman()) {
-        $card1 = $cards[0]['suite'] . $cards[0]['value'];
-        $card2 = $cards[1]['suite'] . $cards[1]['value'];
-        giveInformation('Your hole cards are ' . $card1 . ' and ' . $card2);
-      }
     }
   }
 
   public function burnACard()
   {
     $burned = array_shift($this->deck);
-    array_push($this->discarded, $burned);
+    $this->discardCards($burned);
+  }
+
+  public function discardCards(array $cards)
+  {
+    if(isset($cards['suite'])) {
+      array_push($this->discarded, $burned);
+    }
   }
 
   public function dealCards($num)
@@ -55,4 +57,11 @@ class Dealer
 
   public function doTheRiver()
   {}
+
+  public function acceptReturnedCards(array $cards)
+  {
+    foreach($cards as $card) {
+      $this->discardCards($card);
+    }
+  }
 }
